@@ -39,7 +39,7 @@ const items = {
   "Ayam Gunting": { "Chicken UN 🍗": 45.00, "Chicken Popcorn 🍿": 23.00, "Chicken CF 🍗": 43.00 },
   "Lemon Soda 🍋": { "Soda 🥤": 3.00, "SunQuick": 14.00, "Lemon 🍋": 2.00, "Ice cube 🧊": 3.00, "Pudina": 2.00 },
   "SOS": { "Mayo": 20.00, "Cili": 8.00, "BBQ": 8.00, "B.Papper": 8.00, "Korean Sos": 19.00, "cheese 🧀": 16.00 },
-  "Plastic": { "P.Small": 2.00, "P.Medium": 3.00, "P.Big": 4.00, "Cup": 9.00, "Cup lid": 5.00, "Straw": 3.00, "S.Container small": 6.00, "S.Container big": 8.00, "Spoon 🥄": 3.00, "Garbage Bag 🗑️ 💼": 4.00, "Cup Plastic 🥤": 2.00 },
+  "Plastic": { "P.Small": 2.00, "P.Medium": 3.00, "P.Big": 4.00, "Cup": 9.00, "Cup lid": 5.00, "Straw": 3.00, "S.Container small": 6.00, "S.Container big": 8.00, "Spoon 🥄": 3.00, "Garbage Bag 🗑 💼": 4.00, "Cup Plastic 🥤": 2.00 },
   "Flour": { "Starch": 2.00, "Bestari flour": 9.00, "B.Papper": 19.00, "W.Papper": 8.00, "Salt 🧂": 2.00, "Cili Powder": 27.00, "Paprika": 31.00 },
   "Others": { "Lunchbox": 13.00, "Styrofoam": 9.00, "Stick 🦯": 3.00, "Rubber ban": 3.00, "Gloves 🧤": 3.00, "Petrol gen": 8.00, "Petrol van 🚐 ⛽️": 21.00, "Petrol FZ ⛽️": 11.00, "2T": 17.00, "Spark plug 🔌": 12.00, "Cooking Oil": 5.00, "Eggs 🥚": 7.00, "Milk 🥛": 5.00, "Gas ⛽️": 29.00, "Buttercup": 6.00, "Mask": 10.00, "DishWash": 20.00, "Candle": 3.00, "Sambrani": 10.00, "MatchBox": 4.00, "Marker": 2.60, "TUbeLight": 9.00, "Handwash": 2.60, "Spark-L": 2.60 },
 };
@@ -82,23 +82,22 @@ function createFolder(folderName, itemList) {
   // Folder in Items page (A)
   const divA = document.createElement("div");
   divA.className = "folder";
-  divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
+  divA.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>;
   document.getElementById("foldersA").appendChild(divA);
-
   // Folder in Items to Buy page (B)
   const divB = document.createElement("div");
   divB.className = "folder";
-  divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>`;
+  divB.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>;
   document.getElementById("foldersB").appendChild(divB);
 
   for (const [itemName, price] of Object.entries(itemList)) {
     const li = document.createElement("li");
-    li.textContent = `${itemName} - RM${price.toFixed(2)}`;
+    li.textContent = ${itemName} - RM${price.toFixed(2)};
 
     const isSelected = selected.some(i => i.folder === id && i.name === itemName);
     li.onclick = () => moveItem(li, folderName, itemName, price, !isSelected);
 
-    document.getElementById(`${id}_${isSelected ? "B" : "A"}`).appendChild(li);
+    document.getElementById(${id}_${isSelected ? "B" : "A"}).appendChild(li);
   }
 }
 
