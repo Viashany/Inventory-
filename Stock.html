@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Mister 36 Outlet Inventory</title>
+  <title>Mister 36 Outlet</title>
   <style>
     .container { display: flex; gap: 50px; flex-wrap: wrap; }
     .page { width: 45%; border: 1px solid #aaa; padding: 10px; box-sizing: border-box; }
@@ -11,124 +11,180 @@
     li { background: #f0f0f0; padding: 8px; margin: 5px; cursor: pointer; border-radius: 5px; }
     li:hover { background: #d0e0ff; }
     .folder { margin: 10px 0; padding: 5px; background: #f7f7f7; border: 1px dashed #aaa; border-radius: 4px; }
-    .actions { text-align: center; margin-top: 10px; }
-    .actions button { border: 1px solid #666; background: #fff; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
-    .actions button:hover { background: #f1f1f1; }
-
-    @media (max-width: 900px) {
-      .page { width: 100%; }
-    }
   </style>
 </head>
-
 <body>
-  <h1 style="text-align:center;">Mister 36 Outlet Inventory</h1>
 
-  <div class="container">
-    <div class="page">
-      <h2>Items</h2>
-      <div id="foldersA"></div>
-    </div>
+<h1 style="text-align:center;">Mister 36 Outlet Inventory</h1>
 
-    <div class="page">
-      <h2>Items To Buy</h2>
-      <div id="foldersB"></div>
-      <h3 id="totalPrice">Total: RM 0.00</h3>
-      <div class="actions">
-        <button type="button" id="clearList">Clear List</button>
-      </div>
-    </div>
+<div class="container">
+  <div class="page" id="itemsPage">
+    <h2>Items</h2>
+    <div id="foldersA"></div>
   </div>
 
-  <script>
-    const items = {
-      "Frozen food": { "Hotdogs": 18.00, "Nuggets": 15.00, "Popcorn Chicken 🍿🍗": 21.00, "Fries 🍟": 7.00, "Wontan": 12.50, "Seafood 6 in 1": 9.00 },
-      "Burger": { "Bun": 3.00, "Vegetables 🥒": 5.00, "Butter 🧈": 8.00, "Tissue": 1.00 },
-      "Nasi Lemak": { "Kelapa Parut": 4.00, "Nuts 🥜": 8.00, "Ikan Bilis": 28.00, "Dry Cili": 7.00, "Cukup Rasa": 4.00, "Lemon Grass": 2.00, "Ginger 🫚": 2.00, "Rice 🌾": 26.00, "Herbs 🪴": 8.00, "Pandan Leaves 🍃": 2.00 },
-      "Ayam Gunting": { "Chicken UN 🍗": 45.00, "Chicken Popcorn 🍿": 23.00, "Chicken CF 🍗": 43.00 },
-      "Lemon Soda 🍋": { "Soda 🥤": 3.00, "SunQuick": 14.00, "Lemon 🍋": 2.00, "Ice cube 🧊": 3.00, "Pudina": 2.00 },
-      "SOS": { "Mayo": 20.00, "Cili": 8.00, "BBQ": 8.00, "B.Papper": 8.00, "Korean Sos": 19.00, "cheese 🧀": 16.00 },
-      "Plastic": { "P.Small": 2.00, "P.Medium": 3.00, "P.Big": 4.00, "Cup": 9.00, "Cup lid": 5.00, "Straw": 3.00, "S.Container small": 6.00, "S.Container big": 8.00, "Spoon 🥄": 3.00, "Garbage Bag 🗑 💼": 4.00, "Cup Plastic 🥤": 2.00 },
-      "Flour": { "Starch": 2.00, "Bestari flour": 9.00, "B.Papper": 19.00, "W.Papper": 8.00, "Salt 🧂": 2.00, "Cili Powder": 27.00, "Paprika": 31.00 },
-      "Others": { "Lunchbox": 13.00, "Styrofoam": 9.00, "Stick 🦯": 3.00, "Rubber ban": 3.00, "Gloves 🧤": 3.00, "Petrol gen": 8.00, "Petrol van 🚐 ⛽️": 21.00, "Petrol FZ ⛽️": 11.00, "2T": 17.00, "Spark plug 🔌": 12.00, "Cooking Oil": 5.00, "Eggs 🥚": 7.00, "Milk 🥛": 5.00, "Gas ⛽️": 29.00, "Buttercup": 6.00, "Mask": 10.00, "DishWash": 20.00, "Candle": 3.00, "Sambrani": 10.00, "MatchBox": 4.00, "Marker": 2.60, "TUbeLight": 9.00, "Handwash": 2.60, "Spark-L": 2.60 }
-    };
+  <div class="page" id="itemsToBuyPage">
+    <h2>Items To Buy</h2>
+    <div id="foldersB"></div>
+    <h3 id="totalPrice" style="text-align:center; margin-top:20px;">Total: RM 0.00</h3>
+  </div>
+</div>
 
-    function folderId(name) {
-      return name.replace(/[^a-zA-Z0-9]+/g, "_");
-    }
+<script>
+const items = {
+  "Frozen food": {
+    "Hotdogs": 18.00,
+    "Nuggets": 15.00,
+    "Popcorn Chicken 🍿🍗": 21.00,
+    "Fries 🍟": 7.00,
+    "Wanton": 11.00,
+    "Seafood 6 in 1": 9.00
+  },
+  "Burger": {
+    "Bun": 3.00,
+    "Vegetables 🥒": 5.00,
+    "Butter 🧈": 8.00,
+    "Tissue": 1.00
+  },
+  "Nasi Lemak": {
+    "Kelapa Parut": 4.00,
+    "Nuts 🥜": 8.00,
+    "Ikan Bilis": 28.00,
+    "Dry Cili": 7.00,
+    "Cukup Rasa": 4.00,
+    "Lemon Grass": 2.00,
+    "Ginger 🫚": 2.00,
+    "Rice 🌾": 26.00,
+    "Herbs 🪴": 8.00,
+    "Pandan Leaves 🍃": 2.00
+  },
+  "Ayam Gunting": {
+    "Chicken UN 🍗": 45.00,
+    "Chicken Popcorn 🍿": 23.00,
+    "Chicken CF 🍗": 43.00
+  },
+  "Lemon Soda 🍋": {
+    "Soda 🥤": 3.00,
+    "SunQuick": 14.00,
+    "Lemon 🍋": 2.00,
+    "Ice cube 🧊": 3.00,
+    "Pudina🍵": 2.00
+  },
+  "SOS": {
+    "Mayo": 20.00,
+    "Cili": 8.00,
+    "BBQ": 8.00,
+    "B.Papper": 8.00,
+    "Korean Sos": 19.00,
+    "cheese 🧀": 16.00
+  },
+  "Plastic": {
+    "P.Small": 2.00,
+    "P.Medium": 3.00,
+    "P.Big": 4.00,
+    "Cup": 9.00,
+    "Cup lid": 5.00,
+    "Straw": 3.00,
+    "S.Container small": 6.00,
+    "S.Container big": 8.00,
+    "Spoon 🥄": 3.00,
+    "Garbage Bag 🗑️ 💼": 4.00,
+    "Cup Plastic 🥤": 2.00
+  },
+  "Flour": {
+    "Starch": 2.00,
+    "Bestari flour": 9.00,
+    "B.Papper": 19.00,
+    "W.Papper": 8.00,
+    "Salt 🧂": 2.00,
+    "Cili Powder": 27.00,
+    "Paprika": 31.00
+  },
+  "Others": {
+    "Lunchbox": 13.00,
+    "Styrofoam": 9.00,
+    "Stick 🦯": 3.00,
+    "Rubber ban": 3.00,
+    "Gloves 🧤": 3.00,
+    "Petrol gen": 8.00,
+    "Petrol van 🚐 ⛽️": 21.00,
+    "Petrol FZ ⛽️": 11.00,
+    "2T": 17.00,
+    "Spark plug 🔌": 12.00,
+    "Cooking Oil": 5.00,
+    "Eggs 🥚": 7.00,
+    "Milk 🥛": 5.00,
+    "Gas ⛽️": 29.00,
+    "ButterCup🧈🥤": 6.00,
+    "FaceMask🎭": 10.00,
+    "DishWash🧫🚿": 20.00,
+    "candle": 3.00,
+    "Sambrani": 10.00,
+    "MatchBox": 4.00,
+    "Marker🖊️": 2.60,
+    "TubeLight": 9.00,
+    "HandWash": 2.60,
+    "Spark-L": 2.60,
+    "Seissors🔪": 2.60
+  }
+};
 
-    let selected = JSON.parse(localStorage.getItem("itemsToBuy")) || [];
-    const storageKey = "itemsToBuy";
-    let selected = JSON.parse(localStorage.getItem(storageKey)) || [];
+function folderId(name) {
+  return name.replace(/[^a-zA-Z0-9]+/g, "_");
+}
 
-    function save() {
-      localStorage.setItem("itemsToBuy", JSON.stringify(selected));
-      localStorage.setItem(storageKey, JSON.stringify(selected));
-    }
+let total = 0;
 
-    function updateTotal() {
-      const total = selected.reduce((sum, i) => sum + Number(i.price), 0);
-      document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
-    }
+function updateTotal() {
+  document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
+}
 
-    function moveItem(li, folderName, itemName, price, toBuy) {
-      const id = folderId(folderName);
-      const fromList = document.getElementById(id + "_" + (toBuy ? "A" : "B"));
-      const toList   = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
+function moveToB(li) {
+  const price = Number(li.dataset.price);
+  total += price;
+  updateTotal();
+  li.onclick = () => moveToA(li);
+  document.getElementById(li.dataset.folder + "_B").appendChild(li);
+}
 
-      if (!fromList || !toList) return;
+function moveToA(li) {
+  const price = Number(li.dataset.price);
+  total -= price;
+  updateTotal();
+  li.onclick = () => moveToB(li);
+  document.getElementById(li.dataset.folder + "_A").appendChild(li);
+}
 
-      fromList.removeChild(li);
-      toList.appendChild(li);
+function createFolder(folderName, itemMap) {
+  const id = folderId(folderName);
 
-      if (toBuy) {
-        selected.push({ folder: id, name: itemName, price });
-        li.onclick = () => moveItem(li, folderName, itemName, price, false);
-      } else {
-        selected = selected.filter(i => !(i.folder === id && i.name === itemName));
-        li.onclick = () => moveItem(li, folderName, itemName, price, true);
-      }
+  const divA = document.createElement("div");
+  divA.className = "folder";
+  divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
+  document.getElementById("foldersA").appendChild(divA);
 
-@@ -86,29 +97,42 @@
-      const divA = document.createElement("div");
-      divA.className = "folder";
-      divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
-      document.getElementById("foldersA").appendChild(divA);
+  const divB = document.createElement("div");
+  divB.className = "folder";
+  divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>`;
+  document.getElementById("foldersB").appendChild(divB);
 
-      const divB = document.createElement("div");
-      divB.className = "folder";
-      divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>`;
-      document.getElementById("foldersB").appendChild(divB);
+  const ulA = divA.querySelector("ul");
 
-      for (const [itemName, price] of Object.entries(itemList)) {
-        const li = document.createElement("li");
-        li.textContent = `${itemName} - RM${Number(price).toFixed(2)}`;
+  for (const [name, price] of Object.entries(itemMap)) {
+    const li = document.createElement("li");
+    li.textContent = `${name} - RM${Number(price).toFixed(2)}`;
+    li.dataset.folder = id;
+    li.dataset.price = price;
+    li.onclick = () => moveToB(li);
+    ulA.appendChild(li);
+  }
+}
 
-        const isSelected = selected.some(i => i.folder === id && i.name === itemName);
-        li.onclick = () => moveItem(li, folderName, itemName, price, !isSelected);
+for (const [folder, list] of Object.entries(items)) {
+  createFolder(folder, list);
+}
+updateTotal();
+</script>
 
-        document.getElementById(`${id}_${isSelected ? "B" : "A"}`).appendChild(li);
-      }
-    }
-
-    for (const [folder, list] of Object.entries(items)) {
-      createFolder(folder, list);
-    }
-
-    document.getElementById("clearList").addEventListener("click", () => {
-      selected = [];
-      save();
-      document.getElementById("foldersA").innerHTML = "";
-      document.getElementById("foldersB").innerHTML = "";
-
-      for (const [folder, list] of Object.entries(items)) {
-        createFolder(folder, list);
-      }
-
-      updateTotal();
-    });
-
-    updateTotal();
-  </script>
 </body>
 </html>
