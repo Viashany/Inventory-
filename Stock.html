@@ -69,8 +69,11 @@ function moveItem(li, folderName, itemName, price, toBuy) {
   const fromList = document.getElementById(id + "_" + (toBuy ? "A" : "B"));
   const toList   = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
 
-  if (!fromList || !toList) return;
-
+  if (!fromList || !toList) {
+  alert("Folder list not found. Try refreshing and clearing storage.");
+  return;
+  }
+  
   fromList.removeChild(li);
   toList.appendChild(li);
 
