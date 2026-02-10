@@ -12,6 +12,7 @@
     li:hover { background: #d0e0ff; }
     .folder { margin: 10px 0; padding: 5px; background: #f7f7f7; border: 1px dashed #aaa; border-radius: 4px; }
     .hint { font-size: 12px; text-align: center; opacity: 0.75; margin-top: -5px; }
+    button { width: 100%; padding: 10px; cursor: pointer; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -20,25 +21,23 @@
 <div class="hint">Click an item to move it between <b>Items</b> and <b>Items To Buy</b>. Saved automatically.</div>
 
 <div class="container">
-  <!-- Items Page -->
   <div class="page">
     <h2>Items</h2>
     <div id="foldersA"></div>
   </div>
 
-  <!-- Items to Buy Page -->
   <div class="page">
     <h2>Items To Buy</h2>
     <div id="foldersB"></div>
     <h3 id="totalPrice">Total: RM 0.00</h3>
-    <button id="clearBtn" style="width:100%; padding:10px; cursor:pointer;">Clear Items To Buy</button>
+    <button id="clearBtn">Clear Items To Buy</button>
   </div>
 </div>
 
 <script>
-// =====================
-// DATA (use qty here)
-// =====================
+/** =====================
+ * DATA: always use {price, qty}
+ * ===================== */
 const items = {
   "Frozen food": {
     "Hotdogs": { price: 18.00, qty: 1 },
@@ -53,7 +52,7 @@ const items = {
     "Sliced Cheese 🧀": { price: 16.60, qty: 1 },
     "Tissue": { price: 1.00, qty: 1 },
     "Kicap": { price: 6.50, qty: 1 },
-    "Wrap": { price: 5.20, qty: 2 }  // <-- instead of duplicate keys
+    "Wrap": { price: 5.20, qty: 2 }
   },
   "Nasi Lemak": {
     "Kelapa Parut": { price: 3.00, qty: 2 },
@@ -107,7 +106,7 @@ const items = {
     "Cup Plastic 🥤": { price: 2.00, qty: 1 }
   },
   "Flour": {
-    "Starch": { price: 2.00, qty: 2 }, // <-- qty instead of duplicate keys
+    "Starch": { price: 2.00, qty: 2 },
     "Bestari flour": { price: 9.00, qty: 1 },
     "W.Papper": { price: 8.00, qty: 1 },
     "Salt 🧂": { price: 2.00, qty: 1 },
@@ -141,43 +140,61 @@ const items = {
   }
 };
 
-// =====================
-// STATE
-// Each selected item must be unique even with qty.
-// We'll store: { folderId, itemName, idx, price }
-// =====================
-let selected = JSON.parse(localStorage.getItem("itemsToBuy")) || [];
-let total = 0;
+/** =====================
+ * SAFE STORAGE
+ * ===================== */
+const STORAGE_KEY = "m36_itemsToBuy_v2";
 
-function save() {
-  localStorage.setItem("itemsToBuy", JSON.stringify(selected));
+function loadSelected() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+function saveSelected(data) {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
 }
 
-function updateTotal() {
-  total = selected.reduce((sum, i) => sum + Number(i.price), 0);
-  document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
-}
-
+/** =====================
+ * SAFE IDs (no emoji, no spaces)
+ * ===================== */
 function folderIdFromName(folderName) {
-  return folderName.replace(/\s+/g, "_");
+  // keep only a-z, A-Z, 0-9; everything else becomes _
+  return String(folderName)
+    .normalize("NFKD")
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
 }
 
 function keyOf(folderId, itemName, idx) {
   return `${folderId}|||${itemName}|||${idx}`;
 }
 
+let selected = loadSelected();
+
 function isSelected(folderId, itemName, idx) {
   return selected.some(i => keyOf(i.folderId, i.name, i.idx) === keyOf(folderId, itemName, idx));
 }
 
-// Move one LI item between lists
+function updateTotal() {
+  const total = selected.reduce((sum, i) => sum + Number(i.price || 0), 0);
+  document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
+}
+
 function moveItem(li, folderName, itemName, price, toBuy, idx) {
   const folderId = folderIdFromName(folderName);
 
   const fromList = document.getElementById(folderId + "_" + (toBuy ? "A" : "B"));
   const toList   = document.getElementById(folderId + "_" + (toBuy ? "B" : "A"));
 
-  if (!fromList || !toList) return;
+  // if IDs failed, don't crash silently
+  if (!fromList || !toList) {
+    alert("Folder ID error. Try Clear Items To Buy, then refresh.");
+    return;
+  }
 
   fromList.removeChild(li);
   toList.appendChild(li);
@@ -190,27 +207,23 @@ function moveItem(li, folderName, itemName, price, toBuy, idx) {
     li.onclick = () => moveItem(li, folderName, itemName, price, true, idx);
   }
 
-  save();
+  saveSelected(selected);
   updateTotal();
 }
 
-// Create a folder box in both columns
 function createFolder(folderName, itemList) {
   const folderId = folderIdFromName(folderName);
 
-  // A side
   const divA = document.createElement("div");
   divA.className = "folder";
   divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${folderId}_A"></ul>`;
   document.getElementById("foldersA").appendChild(divA);
 
-  // B side
   const divB = document.createElement("div");
   divB.className = "folder";
   divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${folderId}_B"></ul>`;
   document.getElementById("foldersB").appendChild(divB);
 
-  // Items
   for (const [itemName, obj] of Object.entries(itemList)) {
     const price = Number(obj.price);
     const qty = Number(obj.qty || 1);
@@ -219,36 +232,32 @@ function createFolder(folderName, itemList) {
       const li = document.createElement("li");
       li.textContent = `${itemName} - RM${price.toFixed(2)}`;
 
-      const selectedAlready = isSelected(folderId, itemName, idx);
-      li.onclick = () => moveItem(li, folderName, itemName, price, !selectedAlready, idx);
+      const already = isSelected(folderId, itemName, idx);
+      li.onclick = () => moveItem(li, folderName, itemName, price, !already, idx);
 
-      document.getElementById(`${folderId}_${selectedAlready ? "B" : "A"}`).appendChild(li);
+      document.getElementById(`${folderId}_${already ? "B" : "A"}`).appendChild(li);
     }
   }
 }
 
-// Render all folders
 function renderAll() {
   document.getElementById("foldersA").innerHTML = "";
   document.getElementById("foldersB").innerHTML = "";
 
-  for (const [folderName, itemList] of Object.entries(items)) {
-    // Normalize: ensure every item is {price, qty}
-    const normalized = {};
-    for (const [name, v] of Object.entries(itemList)) {
-      if (typeof v === "number") normalized[name] = { price: v, qty: 1 };
-      else normalized[name] = { price: v.price, qty: v.qty || 1 };
-    }
-    createFolder(folderName, normalized);
-  }
+  // If old saved data doesn't match current folder IDs, wipe it (prevents “stuck” bugs)
+  const validFolderIds = new Set(Object.keys(items).map(folderIdFromName));
+  selected = selected.filter(x => validFolderIds.has(x.folderId));
+  saveSelected(selected);
 
+  for (const [folderName, itemList] of Object.entries(items)) {
+    createFolder(folderName, itemList);
+  }
   updateTotal();
 }
 
-// Clear selected list
 document.getElementById("clearBtn").onclick = () => {
   selected = [];
-  save();
+  saveSelected(selected);
   renderAll();
 };
 
