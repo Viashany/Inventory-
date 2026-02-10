@@ -1,268 +1,114 @@
+
+You said:
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
   <title>Mister 36 Outlet Inventory</title>
   <style>
     .container { display: flex; gap: 50px; flex-wrap: wrap; }
-    .page { width: 45%; border: 1px solid #aaa; padding: 10px; box-sizing: border-box; }
-    h1, h2, h3 { text-align: center; margin: 10px 0; }
-    ul { list-style: none; padding-left: 10px; margin: 0; }
-    li { background: #f0f0f0; padding: 8px; margin: 5px 0; cursor: pointer; border-radius: 5px; }
+    .page { width: 45%; border: 1px solid #aaa; padding: 10px; }
+    h2, h3 { text-align: center; }
+    ul { list-style: none; padding-left: 20px; }
+    li { background: #f0f0f0; padding: 8px; margin: 5px; cursor: pointer; border-radius: 5px; }
     li:hover { background: #d0e0ff; }
     .folder { margin: 10px 0; padding: 5px; background: #f7f7f7; border: 1px dashed #aaa; border-radius: 4px; }
-    .hint { font-size: 12px; text-align: center; opacity: 0.75; margin-top: -5px; }
-    button { width: 100%; padding: 10px; cursor: pointer; margin-top: 10px; }
   </style>
 </head>
 <body>
 
-<h1>Mister 36 Outlet Inventory</h1>
-<div class="hint">Click an item to move it between <b>Items</b> and <b>Items To Buy</b>. Saved automatically.</div>
-
+<h1 style="text-align:center;">Mister 36 Outlet Inventory</h1>
 <div class="container">
+  <!-- Items Page -->
   <div class="page">
     <h2>Items</h2>
     <div id="foldersA"></div>
   </div>
 
+  <!-- Items to Buy Page -->
   <div class="page">
     <h2>Items To Buy</h2>
     <div id="foldersB"></div>
     <h3 id="totalPrice">Total: RM 0.00</h3>
-    <button id="clearBtn">Clear Items To Buy</button>
   </div>
 </div>
 
 <script>
-/** =====================
- * DATA: always use {price, qty}
- * ===================== */
+// Items data
 const items = {
-  "Frozen food": {
-    "Hotdogs": { price: 18.00, qty: 1 },
-    "Nuggets": { price: 14.50, qty: 1 },
-    "Fries 🍟": { price: 5.50, qty: 2 }
-  },
-  "Burger": {
-    "Bun": { price: 3.00, qty: 3 },
-    "Coral": { price: 5.00, qty: 1 },
-    "Timun 🥒": { price: 3.00, qty: 1 },
-    "Butter 🧈": { price: 8.00, qty: 1 },
-    "Sliced Cheese 🧀": { price: 16.60, qty: 1 },
-    "Tissue": { price: 1.00, qty: 1 },
-    "Kicap": { price: 6.50, qty: 1 },
-    "Wrap": { price: 5.20, qty: 2 }
-  },
-  "Nasi Lemak": {
-    "Kelapa Parut": { price: 3.00, qty: 2 },
-    "Nuts 🥜": { price: 8.00, qty: 1 },
-    "Ikan Bilis": { price: 28.00, qty: 1 },
-    "Dry Cili": { price: 7.00, qty: 1 },
-    "Cukup Rasa": { price: 4.00, qty: 1 },
-    "Lemon Grass": { price: 2.00, qty: 1 },
-    "Rice 🌾": { price: 19.00, qty: 1 },
-    "Aji namoto": { price: 5.00, qty: 1 },
-    "Asam Jawa": { price: 3.00, qty: 1 },
-    "Garam": { price: 3.00, qty: 1 },
-    "Gula Pasir": { price: 3.00, qty: 1 },
-    "Cuka": { price: 3.00, qty: 1 },
-    "Cube Ikan Bilis": { price: 5.00, qty: 1 },
-    "Belacan": { price: 3.00, qty: 1 },
-    "Bawang Merah": { price: 5.00, qty: 1 },
-    "Bawang Putih": { price: 3.00, qty: 1 },
-    "Pandan Leaves 🍃": { price: 2.00, qty: 1 }
-  },
-  "Ayam Gunting": {
-    "Chicken UN 🍗": { price: 45.00, qty: 1 },
-    "Chicken Popcorn 🍿": { price: 23.00, qty: 1 },
-    "Chicken CF 🍗": { price: 43.00, qty: 1 }
-  },
-  "Lemon Soda 🍋": {
-    "Soda 🥤": { price: 3.00, qty: 5 },
-    "Plastic Bottel 🍾 (10 pcs)": { price: 7.50, qty: 1 },
-    "SunQuick": { price: 14.00, qty: 1 },
-    "Lime 🍋": { price: 2.00, qty: 1 },
-    "Ice cube 🧊": { price: 3.50, qty: 2 },
-    "Pudina": { price: 2.00, qty: 1 },
-    "Chia Seed": { price: 7.50, qty: 1 }
-  },
-  "SOS": {
-    "Mayo": { price: 10.90, qty: 1 },
-    "Cili": { price: 6.00, qty: 1 },
-    "BBQ": { price: 9.00, qty: 1 },
-    "Cheese 🧀": { price: 16.00, qty: 1 }
-  },
-  "Plastic": {
-    "P.Small": { price: 2.00, qty: 1 },
-    "P.Medium": { price: 3.00, qty: 1 },
-    "P.Big": { price: 4.00, qty: 1 },
-    "Cup Set": { price: 15.00, qty: 1 },
-    "Straw": { price: 3.00, qty: 1 },
-    "S.Container small": { price: 6.00, qty: 1 },
-    "S.Container big": { price: 5.00, qty: 1 },
-    "Spoon 🥄": { price: 3.00, qty: 1 },
-    "Garbage Bag 🗑️ 💼": { price: 4.00, qty: 1 },
-    "Cup Plastic 🥤": { price: 2.00, qty: 1 }
-  },
-  "Flour": {
-    "Starch": { price: 2.00, qty: 2 },
-    "Bestari flour": { price: 9.00, qty: 1 },
-    "W.Papper": { price: 8.00, qty: 1 },
-    "Salt 🧂": { price: 2.00, qty: 1 },
-    "Cili Powder": { price: 27.00, qty: 1 },
-    "Paprika": { price: 31.00, qty: 1 }
-  },
-  "Others": {
-    "Lunchbox": { price: 10.00, qty: 1 },
-    "Styrofoam": { price: 9.00, qty: 1 },
-    "Stick 🦯": { price: 3.00, qty: 1 },
-    "Rubber band": { price: 1.60, qty: 1 },
-    "Gloves 🧤": { price: 3.00, qty: 1 },
-    "Petrol gen": { price: 6.00, qty: 1 },
-    "Petrol van 🚐 ⛽️": { price: 10.00, qty: 1 },
-    "Petrol FZ ⛽️": { price: 12.00, qty: 1 },
-    "2T": { price: 17.00, qty: 1 },
-    "Spark plug 🔌": { price: 12.00, qty: 1 },
-    "Cooking Oil": { price: 7.50, qty: 1 },
-    "Eggs 🥚": { price: 12.00, qty: 1 },
-    "Gas ⛽️": { price: 29.00, qty: 1 },
-    "Mask": { price: 10.00, qty: 1 },
-    "DishWash": { price: 10.00, qty: 1 },
-    "Detergent": { price: 10.00, qty: 1 },
-    "Candle": { price: 3.00, qty: 1 },
-    "Sambrani": { price: 5.00, qty: 1 },
-    "MatchBox": { price: 4.00, qty: 1 },
-    "Marker": { price: 2.60, qty: 1 },
-    "TubeLight": { price: 9.00, qty: 1 },
-    "Handwash": { price: 2.60, qty: 1 },
-    "Spark-L": { price: 2.60, qty: 1 }
-  }
+  "Frozen food": { "Hotdogs": 18.00, "Nuggets": 14.50, "Fries 🍟": 5.50, "Fries 🍟": 5.50 },
+  "Burger": { "Bun1": 3.00, "Bun2": 3.00, "Bun3": 3.00, "Coral ": 5.00, "Timun 🥒": 3.00, "Butter 🧈": 8.00, "Sliced Cheese 🧀": 16.60, "Tissue": 1.00, "Kicap": 6.50, "Wrap": 7.80, "Wrap": 5.20, },
+  "Nasi Lemak": { "Kelapa Parut1": 3.00, "Kelapa Parut2": 3.00, "Nuts 🥜": 8.00, "Ikan Bilis": 28.00, "Dry Cili": 7.00, "Cukup Rasa": 4.00, "Lemon Grass": 2.00, "Rice 🌾": 19.00, "Aji namoto": 5.00, "Asam Jawa": 3.00, "Garam": 3.00, "Gula Pasir": 3.00, "Cuka": 3.00, "Cube Ikan Bilis": 5.00, "Belacan": 3.00, "Bawang Merah": 5.00, "Bawang Putih": 3.00, "Pandan Leaves 🍃": 2.00 },
+  "Ayam Gunting": { "Chicken UN 🍗": 45.00, "Chicken Popcorn 🍿": 23.00, "Chicken CF 🍗": 43.00 },
+  "Lemon Soda 🍋": { "Soda1 🥤": 3.00, "Soda2 🥤": 3.00, "Soda3 🥤": 3.00, "Soda4 🥤": 3.00, "Soda5 🥤": 3.00, "Plastic Bottel 🍾(10 pcs)": 7.50, "SunQuick": 14.00, "Lime 🍋": 2.00, "Ice cube1 🧊": 3.50, "Ice cube2 🧊": 3.50, "Pudina": 2.00, "Chia Seed": 7.50 },
+  "SOS": { "Mayo": 10.90, "Cili": 6.00, "BBQ": 9.00, "cheese 🧀": 16.00 },
+  "Plastic": { "P.Small": 2.00, "P.Medium": 3.00, "P.Big": 4.00, "Cup Set": 15.00, "Straw": 3.00, "S.Container small": 6.00, "S.Container big": 5.00, "Spoon 🥄": 3.00, "Garbage Bag 🗑️ 💼": 4.00, "Cup Plastic 🥤": 2.00 },
+  "Flour": { "Starch1": 2.00, "Starch2": 2.00, "Bestari flour": 9.00, "W.Papper": 8.00, "Salt 🧂": 2.00, "Cili Powder": 27.00, "Paprika": 31.00 },
+  "Others": { "Lunchbox": 10.00, "Styrofoam": 9.00, "Stick 🦯": 3.00, "Rubber ban": 1.60, "Gloves 🧤": 3.00, "Petrol gen": 6.00, "Petrol van 🚐 ⛽️": 10.00, "Petrol FZ ⛽️": 12.00, "2T": 17.00, "Spark plug 🔌": 12.00, "Cooking Oil": 7.50, "Eggs 🥚": 12.00, "Gas ⛽️": 29.00, "Mask": 10.00, "DishWash": 10.00, "Detergent": 10.00, "Candle": 3.00, "Sambrani": 5.00, "MatchBox": 4.00, "Marker": 2.60, "TUbeLight": 9.00, "Handwash": 2.60, "Spark-L": 2.60 },
 };
 
-/** =====================
- * SAFE STORAGE
- * ===================== */
-const STORAGE_KEY = "m36_itemsToBuy_v2";
+let total = 0;
+let selected = JSON.parse(localStorage.getItem("itemsToBuy")) || [];
 
-function loadSelected() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const data = raw ? JSON.parse(raw) : [];
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-function saveSelected(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
-}
-
-/** =====================
- * SAFE IDs (no emoji, no spaces)
- * ===================== */
-function folderIdFromName(folderName) {
-  // keep only a-z, A-Z, 0-9; everything else becomes _
-  return String(folderName)
-    .normalize("NFKD")
-    .replace(/[^a-zA-Z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-}
-
-function keyOf(folderId, itemName, idx) {
-  return `${folderId}|||${itemName}|||${idx}`;
-}
-
-let selected = loadSelected();
-
-function isSelected(folderId, itemName, idx) {
-  return selected.some(i => keyOf(i.folderId, i.name, i.idx) === keyOf(folderId, itemName, idx));
+function save() {
+  localStorage.setItem("itemsToBuy", JSON.stringify(selected));
 }
 
 function updateTotal() {
-  const total = selected.reduce((sum, i) => sum + Number(i.price || 0), 0);
+  total = selected.reduce((sum, i) => sum + parseFloat(i.price), 0);
   document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
 }
 
-function moveItem(li, folderName, itemName, price, toBuy, idx) {
-  const folderId = folderIdFromName(folderName);
-
-  const fromList = document.getElementById(folderId + "_" + (toBuy ? "A" : "B"));
-  const toList   = document.getElementById(folderId + "_" + (toBuy ? "B" : "A"));
-
-  // if IDs failed, don't crash silently
-  if (!fromList || !toList) {
-    alert("Folder ID error. Try Clear Items To Buy, then refresh.");
-    return;
-  }
+function moveItem(li, folder, itemName, price, toBuy) {
+  const id = folder.replace(/\s+/g, "_");
+  const fromList = document.getElementById(id + "_" + (toBuy ? "A" : "B"));
+  const toList = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
 
   fromList.removeChild(li);
   toList.appendChild(li);
 
   if (toBuy) {
-    selected.push({ folderId, name: itemName, idx, price });
-    li.onclick = () => moveItem(li, folderName, itemName, price, false, idx);
+    selected.push({ folder: id, name: itemName, price });
+    li.onclick = () => moveItem(li, folder, itemName, price, false);
   } else {
-    selected = selected.filter(i => keyOf(i.folderId, i.name, i.idx) !== keyOf(folderId, itemName, idx));
-    li.onclick = () => moveItem(li, folderName, itemName, price, true, idx);
+    selected = selected.filter(i => !(i.folder === id && i.name === itemName));
+    li.onclick = () => moveItem(li, folder, itemName, price, true);
   }
 
-  saveSelected(selected);
+  save();
   updateTotal();
 }
 
 function createFolder(folderName, itemList) {
-  const folderId = folderIdFromName(folderName);
+  const id = folderName.replace(/\s+/g, "_");
 
+  // Folder in Items page (A)
   const divA = document.createElement("div");
   divA.className = "folder";
-  divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${folderId}_A"></ul>`;
+  divA.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>;
   document.getElementById("foldersA").appendChild(divA);
 
+  // Folder in Items to Buy page (B)
   const divB = document.createElement("div");
   divB.className = "folder";
-  divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${folderId}_B"></ul>`;
+  divB.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>;
   document.getElementById("foldersB").appendChild(divB);
 
-  for (const [itemName, obj] of Object.entries(itemList)) {
-    const price = Number(obj.price);
-    const qty = Number(obj.qty || 1);
+  for (const [itemName, price] of Object.entries(itemList)) {
+    const li = document.createElement("li");
+    li.textContent = ${itemName} - RM${price.toFixed(2)};
 
-    for (let idx = 0; idx < qty; idx++) {
-      const li = document.createElement("li");
-      li.textContent = `${itemName} - RM${price.toFixed(2)}`;
+    const isSelected = selected.some(i => i.folder === id && i.name === itemName);
+    li.onclick = () => moveItem(li, folderName, itemName, price, !isSelected);
 
-      const already = isSelected(folderId, itemName, idx);
-      li.onclick = () => moveItem(li, folderName, itemName, price, !already, idx);
-
-      document.getElementById(`${folderId}_${already ? "B" : "A"}`).appendChild(li);
-    }
+    document.getElementById(${id}_${isSelected ? "B" : "A"}).appendChild(li);
   }
 }
 
-function renderAll() {
-  document.getElementById("foldersA").innerHTML = "";
-  document.getElementById("foldersB").innerHTML = "";
-
-  // If old saved data doesn't match current folder IDs, wipe it (prevents “stuck” bugs)
-  const validFolderIds = new Set(Object.keys(items).map(folderIdFromName));
-  selected = selected.filter(x => validFolderIds.has(x.folderId));
-  saveSelected(selected);
-
-  for (const [folderName, itemList] of Object.entries(items)) {
-    createFolder(folderName, itemList);
-  }
-  updateTotal();
+for (const [folder, itemsList] of Object.entries(items)) {
+  createFolder(folder, itemsList);
 }
-
-document.getElementById("clearBtn").onclick = () => {
-  selected = [];
-  saveSelected(selected);
-  renderAll();
-};
-
-renderAll();
+updateTotal();
 </script>
 
 </body>
-</html>
+</html> 
