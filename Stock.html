@@ -11,6 +11,13 @@
     li { background: #f0f0f0; padding: 8px; margin: 5px; cursor: pointer; border-radius: 5px; }
     li:hover { background: #d0e0ff; }
     .folder { margin: 10px 0; padding: 5px; background: #f7f7f7; border: 1px dashed #aaa; border-radius: 4px; }
+    .actions { text-align: center; margin-top: 10px; }
+    .actions button { border: 1px solid #666; background: #fff; padding: 6px 12px; cursor: pointer; border-radius: 4px; }
+    .actions button:hover { background: #f1f1f1; }
+
+    @media (max-width: 900px) {
+      .page { width: 100%; }
+    }
   </style>
 </head>
 
@@ -27,6 +34,9 @@
       <h2>Items To Buy</h2>
       <div id="foldersB"></div>
       <h3 id="totalPrice">Total: RM 0.00</h3>
+      <div class="actions">
+        <button type="button" id="clearList">Clear List</button>
+      </div>
     </div>
   </div>
 
@@ -48,9 +58,12 @@
     }
 
     let selected = JSON.parse(localStorage.getItem("itemsToBuy")) || [];
+    const storageKey = "itemsToBuy";
+    let selected = JSON.parse(localStorage.getItem(storageKey)) || [];
 
     function save() {
       localStorage.setItem("itemsToBuy", JSON.stringify(selected));
+      localStorage.setItem(storageKey, JSON.stringify(selected));
     }
 
     function updateTotal() {
@@ -76,13 +89,7 @@
         li.onclick = () => moveItem(li, folderName, itemName, price, true);
       }
 
-      save();
-      updateTotal();
-    }
-
-    function createFolder(folderName, itemList) {
-      const id = folderId(folderName);
-
+@@ -86,29 +97,42 @@
       const divA = document.createElement("div");
       divA.className = "folder";
       divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
@@ -107,6 +114,19 @@
     for (const [folder, list] of Object.entries(items)) {
       createFolder(folder, list);
     }
+
+    document.getElementById("clearList").addEventListener("click", () => {
+      selected = [];
+      save();
+      document.getElementById("foldersA").innerHTML = "";
+      document.getElementById("foldersB").innerHTML = "";
+
+      for (const [folder, list] of Object.entries(items)) {
+        createFolder(folder, list);
+      }
+
+      updateTotal();
+    });
 
     updateTotal();
   </script>
