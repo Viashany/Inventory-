@@ -57,9 +57,10 @@ function updateTotal() {
 }
 
 function moveItem(li, folder, itemName, price, toBuy) {
-  const id = folder.replace(/\s+/g, "_");
+  const id = folder.replace(/[^a-zA-Z0-9]+/g, "_");
   const fromList = document.getElementById(id + "_" + (toBuy ? "A" : "B"));
   const toList = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
+}
 
   fromList.removeChild(li);
   toList.appendChild(li);
@@ -77,28 +78,28 @@ function moveItem(li, folder, itemName, price, toBuy) {
 }
 
 function createFolder(folderName, itemList) {
-  const id = folderName.replace(/\s+/g, "_");
+  const id = folderName.replace(/[^a-zA-Z0-9]+/g, "_");
 
   // Folder in Items page (A)
   const divA = document.createElement("div");
   divA.className = "folder";
-  divA.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>;
+  divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
   document.getElementById("foldersA").appendChild(divA);
 
   // Folder in Items to Buy page (B)
   const divB = document.createElement("div");
   divB.className = "folder";
-  divB.innerHTML = <h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>;
+  divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>`;
   document.getElementById("foldersB").appendChild(divB);
 
   for (const [itemName, price] of Object.entries(itemList)) {
     const li = document.createElement("li");
-    li.textContent = ${itemName} - RM${price.toFixed(2)};
+    li.textContent = `${itemName} - RM${price.toFixed(2)}`;
 
     const isSelected = selected.some(i => i.folder === id && i.name === itemName);
     li.onclick = () => moveItem(li, folderName, itemName, price, !isSelected);
 
-    document.getElementById(${id}_${isSelected ? "B" : "A"}).appendChild(li);
+    document.getElementById(`${id}_${isSelected ? "B" : "A"}`).appendChild(li);
   }
 }
 
