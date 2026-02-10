@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8" />
   <title>Mister 36 Outlet Inventory</title>
   <style>
     .container { display: flex; gap: 50px; flex-wrap: wrap; }
-    .page { width: 45%; border: 1px solid #aaa; padding: 10px; }
+    .page { width: 45%; border: 1px solid #aaa; padding: 10px; box-sizing: border-box; }
     h2, h3 { text-align: center; }
     ul { list-style: none; padding-left: 20px; }
     li { background: #f0f0f0; padding: 8px; margin: 5px; cursor: pointer; border-radius: 5px; }
@@ -15,14 +16,13 @@
 <body>
 
 <h1 style="text-align:center;">Mister 36 Outlet Inventory</h1>
+
 <div class="container">
-  <!-- Items Page -->
   <div class="page">
     <h2>Items</h2>
     <div id="foldersA"></div>
   </div>
 
-  <!-- Items to Buy Page -->
   <div class="page">
     <h2>Items To Buy</h2>
     <div id="foldersB"></div>
@@ -31,20 +31,27 @@
 </div>
 
 <script>
-// Items data
 const items = {
   "Frozen food": { "Hotdogs": 18.00, "Nuggets": 14.50, "Fries1 🍟": 5.50, "Fries2 🍟": 5.50 },
-  "Burger": { "Bun1": 3.00, "Bun2": 3.00, "Bun3": 3.00, "Coral ": 5.00, "Timun 🥒": 3.00, "Butter 🧈": 8.00, "Sliced Cheese 🧀": 16.60, "Tissue": 1.00, "Kicap": 6.50, "Wrap1": 7.80, "Wrap2": 5.20 },
+  "Burger": { "Bun1": 3.00, "Bun2": 3.00, "Bun3": 3.00, "Coral": 5.00, "Timun 🥒": 3.00, "Butter 🧈": 8.00, "Sliced Cheese 🧀": 16.60, "Tissue": 1.00, "Kicap": 6.50, "Wrap1": 7.80, "Wrap2": 5.20 },
   "Nasi Lemak": { "Kelapa Parut1": 3.00, "Kelapa Parut2": 3.00, "Nuts 🥜": 8.00, "Ikan Bilis": 28.00, "Dry Cili": 7.00, "Cukup Rasa": 4.00, "Lemon Grass": 2.00, "Rice 🌾": 19.00, "Aji namoto": 5.00, "Asam Jawa": 3.00, "Garam": 3.00, "Gula Pasir": 3.00, "Cuka": 3.00, "Cube Ikan Bilis": 5.00, "Belacan": 3.00, "Bawang Merah": 5.00, "Bawang Putih": 3.00, "Pandan Leaves 🍃": 2.00 },
   "Ayam Gunting": { "Chicken UN 🍗": 45.00, "Chicken Popcorn 🍿": 23.00, "Chicken CF 🍗": 43.00 },
   "Lemon Soda 🍋": { "Soda1 🥤": 3.00, "Soda2 🥤": 3.00, "Soda3 🥤": 3.00, "Soda4 🥤": 3.00, "Soda5 🥤": 3.00, "Plastic Bottel 🍾(10 pcs)": 7.50, "SunQuick": 14.00, "Lime 🍋": 2.00, "Ice cube1 🧊": 3.50, "Ice cube2 🧊": 3.50, "Pudina": 2.00, "Chia Seed": 7.50 },
-  "SOS": { "Mayo": 10.90, "Cili": 6.00, "BBQ": 9.00, "cheese 🧀": 16.00 },
+  "SOS": { "Mayo": 10.90, "Cili": 6.00, "BBQ": 9.00, "Cheese 🧀": 16.00 },
   "Plastic": { "P.Small": 2.00, "P.Medium": 3.00, "P.Big": 4.00, "Cup Set": 15.00, "Straw": 3.00, "S.Container small": 6.00, "S.Container big": 5.00, "Spoon 🥄": 3.00, "Garbage Bag 🗑️ 💼": 4.00, "Cup Plastic 🥤": 2.00 },
   "Flour": { "Starch1": 2.00, "Starch2": 2.00, "Bestari flour": 9.00, "W.Papper": 8.00, "Salt 🧂": 2.00, "Cili Powder": 27.00, "Paprika": 31.00 },
-  "Others": { "Lunchbox": 10.00, "Styrofoam": 9.00, "Stick 🦯": 3.00, "Rubber ban": 1.60, "Gloves 🧤": 3.00, "Petrol gen": 6.00, "Petrol van 🚐 ⛽️": 10.00, "Petrol FZ ⛽️": 12.00, "2T": 17.00, "Spark plug 🔌": 12.00, "Cooking Oil": 7.50, "Eggs 🥚": 12.00, "Gas ⛽️": 29.00, "Mask": 10.00, "DishWash": 10.00, "Detergent": 10.00, "Candle": 3.00, "Sambrani": 5.00, "MatchBox": 4.00, "Marker": 2.60, "TUbeLight": 9.00, "Handwash": 2.60, "Spark-L": 2.60 },
+  "Others": { "Lunchbox": 10.00, "Styrofoam": 9.00, "Stick 🦯": 3.00, "Rubber ban": 1.60, "Gloves 🧤": 3.00, "Petrol gen": 6.00, "Petrol van 🚐 ⛽️": 10.00, "Petrol FZ ⛽️": 12.00, "2T": 17.00, "Spark plug 🔌": 12.00, "Cooking Oil": 7.50, "Eggs 🥚": 12.00, "Gas ⛽️": 29.00, "Mask": 10.00, "DishWash": 10.00, "Detergent": 10.00, "Candle": 3.00, "Sambrani": 5.00, "MatchBox": 4.00, "Marker": 2.60, "TUbeLight": 9.00, "Handwash": 2.60, "Spark-L": 2.60 }
 };
 
-let total = 0;
+// Safe ID for folders (remove emojis/special chars)
+function folderId(name) {
+  return name.replace(/[^a-zA-Z0-9]+/g, "_");
+}
+
+// IMPORTANT: clear old broken saved data once
+// Comment this out later if you want saving
+localStorage.removeItem("itemsToBuy");
+
 let selected = JSON.parse(localStorage.getItem("itemsToBuy")) || [];
 
 function save() {
@@ -52,25 +59,27 @@ function save() {
 }
 
 function updateTotal() {
-  total = selected.reduce((sum, i) => sum + parseFloat(i.price), 0);
+  const total = selected.reduce((sum, i) => sum + Number(i.price), 0);
   document.getElementById("totalPrice").innerText = "Total: RM " + total.toFixed(2);
 }
 
-function moveItem(li, folder, itemName, price, toBuy) {
-  const id = folder.replace(/[^a-zA-Z0-9]+/g, "_");
+function moveItem(li, folderName, itemName, price, toBuy) {
+  const id = folderId(folderName);
+
   const fromList = document.getElementById(id + "_" + (toBuy ? "A" : "B"));
-  const toList = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
-}
+  const toList   = document.getElementById(id + "_" + (toBuy ? "B" : "A"));
+
+  if (!fromList || !toList) return;
 
   fromList.removeChild(li);
   toList.appendChild(li);
 
   if (toBuy) {
     selected.push({ folder: id, name: itemName, price });
-    li.onclick = () => moveItem(li, folder, itemName, price, false);
+    li.onclick = () => moveItem(li, folderName, itemName, price, false);
   } else {
     selected = selected.filter(i => !(i.folder === id && i.name === itemName));
-    li.onclick = () => moveItem(li, folder, itemName, price, true);
+    li.onclick = () => moveItem(li, folderName, itemName, price, true);
   }
 
   save();
@@ -78,15 +87,13 @@ function moveItem(li, folder, itemName, price, toBuy) {
 }
 
 function createFolder(folderName, itemList) {
-  const id = folderName.replace(/[^a-zA-Z0-9]+/g, "_");
+  const id = folderId(folderName);
 
-  // Folder in Items page (A)
   const divA = document.createElement("div");
   divA.className = "folder";
   divA.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_A"></ul>`;
   document.getElementById("foldersA").appendChild(divA);
 
-  // Folder in Items to Buy page (B)
   const divB = document.createElement("div");
   divB.className = "folder";
   divB.innerHTML = `<h3>📂 ${folderName}</h3><ul id="${id}_B"></ul>`;
@@ -94,7 +101,7 @@ function createFolder(folderName, itemList) {
 
   for (const [itemName, price] of Object.entries(itemList)) {
     const li = document.createElement("li");
-    li.textContent = `${itemName} - RM${price.toFixed(2)}`;
+    li.textContent = `${itemName} - RM${Number(price).toFixed(2)}`;
 
     const isSelected = selected.some(i => i.folder === id && i.name === itemName);
     li.onclick = () => moveItem(li, folderName, itemName, price, !isSelected);
@@ -110,4 +117,4 @@ updateTotal();
 </script>
 
 </body>
-</html> 
+</html>
